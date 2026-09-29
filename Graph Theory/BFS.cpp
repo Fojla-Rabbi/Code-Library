@@ -7,10 +7,20 @@ vector<int> adj[N];
 bool vis[N];
 int dist[N];
 
-// O(V + 2E) = O(V + E)
-// For each node, all its adjacent nodes are checked (adjacent edges simply)
-// And finally you can see that each edges are checked twice
-void bfs(int src) {
+void solve() {
+    int n, m;
+    cin >> n >> m;
+    
+    for(int i = 1; i <= m; i++) {
+        int u, v;
+        cin >> u >> v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+    
+    int src;
+    cin >> src;
+
     queue<int> q;
     q.push(src);
     vis[src] = true;
@@ -23,26 +33,13 @@ void bfs(int src) {
         for(auto v : adj[u]) {
             if(!vis[v]) {
                 // perfect order
+                q.push(v);
                 vis[v] = true;
                 dist[v] = dist[u] + 1;
-                q.push(v);
             }
         }
     }
-}
-
-void solve() {
-    int n, m;
-    cin >> n >> m;
-    for(int i = 1; i <= m; i++) {
-        int u, v;
-        cin >> u >> v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
-    }
     
-    bfs(1);
-    int cnt = 0;
     for(int i = 1; i <= n; i++) {
         cout << dist[i] << " ";
     }
