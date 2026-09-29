@@ -1,5 +1,8 @@
 // https://codeforces.com/gym/105588/problem/G
 
+// It doesn't need to have the already built tree
+// BFS runs on the fly and level can be tracked easily
+
 #include<bits/stdc++.h>
 using namespace std;
 #define ll long long
