@@ -2,65 +2,70 @@
 using namespace std;
 #define ll long long
 
-const int N = 2e5 + 5;
-vector<int> adj[N];
-vector<pair<int, int>> edges;
-
-void dfs(int u, int p, string s) {
-    for(auto v : adj[u]) {
-        if(v != p) {
-            if(s == "out") {
-                edges.push_back({u, v});
-                dfs(v, u, "in");
-            }
-            else {
-                edges.push_back({v, u});
-                dfs(v, u, "out");
-            }
-        }
-    }
-}
-
 void solve() {
     int n;
     cin >> n;
 
-    for(int i = 0; i <= n; i++) {
-        adj[i].clear();
-    }
-    edges.clear();
-
-    for(int i = 1; i < n; i++) {
-        int u, v;
-        cin >> u >> v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
-    }
-
-    int root = -1;
+    vector<int> a(n + 1);
     for(int i = 1; i <= n; i++) {
-        int sz = adj[i].size();
-        if(sz == 2) {
-            root = i;
-            break;
-        }
+        cin >> a[i];
     }
 
-    if(n == 2 || root == -1) {
+    map<int, int> mp;
+    bool one_odd = true;
+
+    for(int i = 1; i <= n; i++) {
+        if(i % 2 == 0) {
+            mp[a[i]] = 0;
+            if(a[i] == 1) {
+                one_odd = false;
+            }
+        }
+        else mp[a[i]] = 1;
+    }
+
+    if(n % 2 != 0 && !one_odd) {
         cout << "NO\n";
         return;
     }
 
-    edges.push_back({adj[root][0], root});
-    edges.push_back({root, adj[root][1]});
+    vector<int> first, last;
+    for(int i = 1; i <= n - 2; i++) {
+        if(mp[i] == mp[i + 1]) {
+            int prev = i, cur = i + 2;
+            while(cur < n) {
+                if(mp[cur] == mp[prev]) {
+                    last.push_back(cur);
+                    cur++;
+                }
+                else {
+                    first.push_back(cur);
+                    prev = cur;
+                    cur++;
+                } 
+            }
 
-    dfs(adj[root][0], root, "out");
-    dfs(adj[root][1], root, "in");
+            break;
+        }
+    }
+    
+    reverse(last.begin(), last.end());
+
+    vector<int> final = first;
+    final.push_back(n);
+
+    for(int i = 0; i < last.size(); i++) {
+        final.push_back(last[i]);
+    }
+
+    for(int i = 1; i < final.size(); i++) {
+        if(mp[final[i]] == mp[final[i - 1]]) {
+            cout << "NO\n";
+            return;
+        }
+    }
 
     cout << "YES\n";
-    for(auto [x, y] : edges) {
-        cout << x << " " << y << '\n';
-    }
 }
 
 int main() {
@@ -68,7 +73,7 @@ int main() {
     cin.tie(NULL);
 
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while(t--) {
         solve();
     }
