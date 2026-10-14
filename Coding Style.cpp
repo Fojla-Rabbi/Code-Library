@@ -1,71 +1,41 @@
+// Fixed
+
 #include<bits/stdc++.h>
+#include<ext/pb_ds/assoc_container.hpp>
+#include<ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
 using namespace std;
 #define ll long long
 
-void solve() {
-    int n;
-    cin >> n;
+template <typename T> using o_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-    vector<int> a(n + 1);
+void solve() {
+    int n, k;
+    cin >> n >> k;
+
+    vector<ll> a(n + 1), pref(n + 1);
     for(int i = 1; i <= n; i++) {
         cin >> a[i];
+        pref[i] = (pref[i - 1] + a[i]) % k;
     }
 
-    map<int, int> mp;
-    bool one_odd = true;
-
+    ll ans = 0;
+    map<ll, o_set<int>> mp;
+    mp[0].insert(0);
     for(int i = 1; i <= n; i++) {
-        if(i % 2 == 0) {
-            mp[a[i]] = 0;
-            if(a[i] == 1) {
-                one_odd = false;
-            }
+        auto it = mp.find(pref[i]);
+        if(it == mp.end()) {
+            mp[pref[i]].insert(i);
+            continue;
         }
-        else mp[a[i]] = 1;
+
+        int idx = i - k;
+        int cnt = mp[pref[i]].order_of_key(idx);
+        ans += cnt;
+        mp[pref[i]].insert(i);
     }
 
-    if(n % 2 != 0 && !one_odd) {
-        cout << "NO\n";
-        return;
-    }
-
-    vector<int> first, last;
-    for(int i = 1; i <= n - 2; i++) {
-        if(mp[i] == mp[i + 1]) {
-            int prev = i, cur = i + 2;
-            while(cur < n) {
-                if(mp[cur] == mp[prev]) {
-                    last.push_back(cur);
-                    cur++;
-                }
-                else {
-                    first.push_back(cur);
-                    prev = cur;
-                    cur++;
-                } 
-            }
-
-            break;
-        }
-    }
-    
-    reverse(last.begin(), last.end());
-
-    vector<int> final = first;
-    final.push_back(n);
-
-    for(int i = 0; i < last.size(); i++) {
-        final.push_back(last[i]);
-    }
-
-    for(int i = 1; i < final.size(); i++) {
-        if(mp[final[i]] == mp[final[i - 1]]) {
-            cout << "NO\n";
-            return;
-        }
-    }
-
-    cout << "YES\n";
+    cout << ans << '\n';
 }
 
 int main() {
