@@ -295,7 +295,7 @@ ll binpow(ll a, ll b, int m) {
     a = a % m;   
     ll res = 1 % m;
     while(b > 0) {
-        if(n & 1) {
+        if(b & 1) {
             res = res * a % m;
         }
         a = a * a % m;
@@ -310,7 +310,7 @@ ll binpow(ll a, ll b, int m) {
 // N = 1e6 + 5 is safer as m = 1e9 + 7 (fact % m won't be 0)
 
 // Will give the modular inverse(a^-1 % m) of "a modulo m"
-int mod_inverse(int a, int m) {
+ll mod_inverse(int a, int m) {
     return binpow(a, m - 2, m);
 }
 
