@@ -1,19 +1,26 @@
+// Final one
+
 #include<bits/stdc++.h>
 using namespace std;
 #define ll long long
 
-const int N = 2e5 + 5;
-int a[N];
-
-struct Node {
-    int gcd, mn, cnt;
-};
-
 struct SegTree {
-    Node seg[4 * N];
+    struct Node {
+        int gcd = 0;
+        int mn = INT_MAX;
+        int cnt = 0;
+    };
 
-    SegTree() {
-        memset(seg, 0, sizeof(seg));
+    int n;
+    vector<Node> tree;
+
+    SegTree(const vector<int> &a) {
+        n = a.size();
+        tree.resize(4 * n + 5);
+
+        if(n > 0) {
+            build(1, 0, n - 1, a);
+        }
     }
 
     Node merge(Node left, Node right) {
@@ -35,56 +42,92 @@ struct SegTree {
         return res;
     }
 
-    void build(int idx, int l, int r) {
+    void build(int node, int l, int r, const vector<int> &a) {
         if(l == r) {
-            seg[idx] = {a[l], a[l], 1};
+            tree[node] = {a[l], a[l], 1};
             return;
         }
 
         int mid = (l + r) / 2;
 
-        build(2 * idx, l, mid);
-        build(2 * idx + 1, mid + 1, r);
+        build(node * 2, l, mid, a);
+        build(node * 2 + 1, mid + 1, r, a);
 
-        seg[idx] = merge(seg[2 * idx], seg[2 * idx + 1]);
+        tree[node] = merge(tree[node * 2],
+                           tree[node * 2 + 1]);
     }
 
-    void update(int idx, int l, int r, int pos, int val) {
+    void update(int node, int l, int r, int pos, int val) {
         if(l == r) {
-            seg[idx] = {val, val, 1};
+            tree[node] = {val, val, 1};
             return;
         }
 
         int mid = (l + r) / 2;
 
-        if(pos <= mid) update(2 * idx, l, mid, pos, val);
-        else update(2 * idx + 1, mid + 1, r, pos, val);
+        if(pos <= mid) {
+            update(node * 2, l, mid, pos, val);
+        }
+        else {
+            update(node * 2 + 1, mid + 1, r, pos, val);
+        }
 
-        seg[idx] = merge(seg[2 * idx], seg[2 * idx + 1]);
+        tree[node] = merge(tree[node * 2],
+                           tree[node * 2 + 1]);
     }
 
-    Node query(int idx, int l, int r, int ql, int qr) {
-        if(r < ql || l > qr) {
+    Node query(int node, int l, int r, int ql, int qr) {
+        if(qr < l || r < ql) {
             return {0, INT_MAX, 0};
         }
-        if(l >= ql && r <= qr) {
-            return seg[idx];
+
+        if(ql <= l && r <= qr) {
+            return tree[node];
         }
 
         int mid = (l + r) / 2;
 
-        return merge(
-            query(2 * idx, l, mid, ql, qr),
-            query(2 * idx + 1, mid + 1, r, ql, qr)
-        );
+        Node left = query(node * 2, l, mid, ql, qr);
+        Node right = query(node * 2 + 1, mid + 1, r, ql, qr);
+
+        return merge(left, right);
     }
-}st; // Global declaration is a must
-// Otherwise stack overflow will occur for large array inside the SegTree
-// Always use Node rather than just int or ll(Node with one member = same as int, ll)
+
+    void update(int pos, int val) {
+        update(1, 0, n - 1, pos, val);
+    }
+
+    Node query(int l, int r) {
+        return query(1, 0, n - 1, l, r);
+    }
+};
+
+void solve() {
+    int n;
+    cin >> n;
+
+    vector<int> a(n);
+    for(int i = 0; i < n; i++) {
+        cin >> a[i];
+    }
+
+    SegTree st(a);
+
+    // Update position 2 to value 10
+    st.update(2, 10);
+
+    // Query range [1, 4]
+    auto res = st.query(1, 4);
+
+    cout << res.gcd << '\n';
+    cout << res.mn << '\n';
+    cout << res.cnt << '\n';
+}
 
 int main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
 
+    solve();
     return 0;
 }
