@@ -3,10 +3,10 @@ using namespace std;
 #define ll long long
 
 struct Hash {
-    static const int p1 = 31;
-    static const int p2 = 37;
     static const int mod1 = 1e9 + 7;
     static const int mod2 = 1e9 + 9;
+    static const int p1 = 31;
+    static const int p2 = 37;
 
     vector<pair<int, int>> h, pw;
 
