@@ -3,41 +3,45 @@
 using namespace std;
 #define ll long long
 
-struct DoubleHash {
-    static const ll mod1 = 1e9 + 7;
-    static const ll mod2 = 1e9 + 9;
-    static const ll base1 = 31;
-    static const ll base2 = 37;
+struct Hash {
+    static const int p1 = 31;
+    static const int p2 = 37;
+    static const int mod1 = 1e9 + 7;
+    static const int mod2 = 1e9 + 9;
 
-    vector<ll> h1, h2, pw1, pw2;
+    vector<pair<int, int>> h, p;
 
-    DoubleHash(const string &s) {
+    Hash(string s) {
         int n = s.size();
+        h.resize(n + 1);
+        p.resize(n + 1);
 
-        h1.resize(n + 1, 0);
-        h2.resize(n + 1, 0);
-        pw1.resize(n + 1, 1);
-        pw2.resize(n + 1, 1);
+        p[0] = {1, 1};
 
-        for(int i = 0; i < n; i++) {
-            ll val = s[i] - 'a' + 1;
+        for (int i = 0; i < n; i++) {
+            int x = s[i] - 'a' + 1;
 
-            h1[i + 1] = (h1[i] * base1 + val) % mod1;
-            h2[i + 1] = (h2[i] * base2 + val) % mod2;
+            p[i + 1] = {
+                1LL * p[i].first * p1 % mod1,
+                1LL * p[i].second * p2 % mod2
+            };
 
-            pw1[i + 1] = (pw1[i] * base1) % mod1;
-            pw2[i + 1] = (pw2[i] * base2) % mod2;
+            h[i + 1] = {
+                (1LL * h[i].first * p1 + x) % mod1,
+                (1LL * h[i].second * p2 + x) % mod2
+            };
         }
     }
 
-    pair<ll, ll> get_hash(int l, int r) {
-        int len = r - l + 1;
+    pair<int, int> get_hash(int l, int r) {
+        // 0-indexed, inclusive
+        int x = (h[r + 1].first -
+                 1LL * h[l].first * p[r - l + 1].first % mod1
+                 + mod1) % mod1;
 
-        ll x = (h1[r + 1] - h1[l] * pw1[len] % mod1
-                + mod1) % mod1;
-
-        ll y = (h2[r + 1] - h2[l] * pw2[len] % mod2
-                + mod2) % mod2;
+        int y = (h[r + 1].second -
+                 1LL * h[l].second * p[r - l + 1].second % mod2
+                 + mod2) % mod2;
 
         return {x, y};
     }
@@ -47,7 +51,7 @@ void solve() {
     string s;
     cin >> s;
 
-    DoubleHash hs(s);
+    Hash hs(s);
 
     int q;
     cin >> q;
