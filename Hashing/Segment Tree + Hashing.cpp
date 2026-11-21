@@ -1,4 +1,3 @@
-
 #include<bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -6,8 +5,8 @@ using namespace std;
 struct SegmentHash {
     static const ll mod1 = 1e9 + 7;
     static const ll mod2 = 1e9 + 9;
-    static const ll base1 = 31;
-    static const ll base2 = 37;
+    static const ll p1 = 31;
+    static const ll p2 = 37;
 
     struct Node {
         ll h1 = 0, h2 = 0;
@@ -16,18 +15,19 @@ struct SegmentHash {
 
     int n;
     vector<Node> tree;
-    vector<ll> pw1, pw2;
+    vector<pair<ll, ll>> pw;
 
-    SegmentHash(const string &s) {
+    SegmentHash(const string& s) {
         n = s.size();
 
         tree.resize(4 * n + 5);
-        pw1.resize(n + 1, 1);
-        pw2.resize(n + 1, 1);
+        pw.resize(n + 1, {1, 1});
 
         for(int i = 1; i <= n; i++) {
-            pw1[i] = pw1[i - 1] * base1 % mod1;
-            pw2[i] = pw2[i - 1] * base2 % mod2;
+            pw[i] = {
+                pw[i - 1].first * p1 % mod1,
+                pw[i - 1].second * p2 % mod2
+            };
         }
 
         if(n > 0) {
@@ -40,13 +40,13 @@ struct SegmentHash {
 
         res.len = left.len + right.len;
 
-        res.h1 = (left.h1 * pw1[right.len] + right.h1) % mod1;
-        res.h2 = (left.h2 * pw2[right.len] + right.h2) % mod2;
+        res.h1 = (left.h1 * pw[right.len].first + right.h1) % mod1;
+        res.h2 = (left.h2 * pw[right.len].second + right.h2) % mod2;
 
         return res;
     }
 
-    void build(int node, int l, int r, const string &s) {
+    void build(int node, int l, int r, const string& s) {
         if(l == r) {
             ll val = s[l] - 'a' + 1;
             tree[node] = {val, val, 1};
@@ -58,8 +58,7 @@ struct SegmentHash {
         build(node * 2, l, mid, s);
         build(node * 2 + 1, mid + 1, r, s);
 
-        tree[node] = merge(tree[node * 2],
-                           tree[node * 2 + 1]);
+        tree[node] = merge(tree[node * 2], tree[node * 2 + 1]);
     }
 
     void update(int node, int l, int r, int pos, char c) {
@@ -78,8 +77,7 @@ struct SegmentHash {
             update(node * 2 + 1, mid + 1, r, pos, c);
         }
 
-        tree[node] = merge(tree[node * 2],
-                           tree[node * 2 + 1]);
+        tree[node] = merge(tree[node * 2], tree[node * 2 + 1]);
     }
 
     Node query(int node, int l, int r, int ql, int qr) {
@@ -128,7 +126,8 @@ void solve() {
             cin >> pos >> c;
 
             hs.update(pos, c);
-        } else if(type == 2) {
+        } 
+        else if(type == 2) {
             int l1, r1, l2, r2;
             cin >> l1 >> r1 >> l2 >> r2;
 
@@ -139,7 +138,8 @@ void solve() {
 
             if(hs.get_hash(l1, r1) == hs.get_hash(l2, r2)) {
                 cout << "YES\n";
-            } else {
+            } 
+            else {
                 cout << "NO\n";
             }
         }
@@ -150,6 +150,11 @@ int main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
 
-    solve();
+    int t = 1;
+    cin >> t;
+
+    while(t--) {
+        solve();
+    }
     return 0;
 }
