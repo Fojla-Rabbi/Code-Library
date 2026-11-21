@@ -1,4 +1,3 @@
-
 #include<bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -9,21 +8,21 @@ struct Hash {
     static const int mod1 = 1e9 + 7;
     static const int mod2 = 1e9 + 9;
 
-    vector<pair<int, int>> h, p;
+    vector<pair<int, int>> h, pw;
 
-    Hash(string s) {
+    Hash(const string& s) {
         int n = s.size();
         h.resize(n + 1);
-        p.resize(n + 1);
+        pw.resize(n + 1);
 
-        p[0] = {1, 1};
+        pw[0] = {1, 1};
 
         for (int i = 0; i < n; i++) {
             int x = s[i] - 'a' + 1;
 
-            p[i + 1] = {
-                1LL * p[i].first * p1 % mod1,
-                1LL * p[i].second * p2 % mod2
+            pw[i + 1] = {
+                1LL * pw[i].first * p1 % mod1,
+                1LL * pw[i].second * p2 % mod2
             };
 
             h[i + 1] = {
@@ -36,11 +35,11 @@ struct Hash {
     pair<int, int> get_hash(int l, int r) {
         // 0-indexed, inclusive
         int x = (h[r + 1].first -
-                 1LL * h[l].first * p[r - l + 1].first % mod1
+                 1LL * h[l].first * pw[r - l + 1].first % mod1
                  + mod1) % mod1;
 
         int y = (h[r + 1].second -
-                 1LL * h[l].second * p[r - l + 1].second % mod2
+                 1LL * h[l].second * pw[r - l + 1].second % mod2
                  + mod2) % mod2;
 
         return {x, y};
@@ -67,10 +66,8 @@ void solve() {
 
         if(hs.get_hash(l1, r1) == hs.get_hash(l2, r2)) {
             cout << "YES\n";
-        } 
-        else {
-            cout << "NO\n";
         }
+        else cout << "NO\n";
     }
 }
 
@@ -78,6 +75,10 @@ int main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
 
-    solve();
+    int t = 1;
+    cin >> t;
+    while(t--) {
+        solve();
+    }
     return 0;
 }
