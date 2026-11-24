@@ -4,9 +4,9 @@ using namespace std;
 
 struct Hash {
     static const int mod1 = 1e9 + 7;
-    static const int mod2 = 1e9 + 9;
+    static const int mod2 = 998244353;
     static const int p1 = 31;
-    static const int p2 = 37;
+    static const int p2 = 59;
 
     vector<pair<int, int>> h, pw;
 
