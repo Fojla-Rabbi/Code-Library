@@ -4,9 +4,9 @@ using namespace std;
 
 struct SegmentHash {
     static const ll mod1 = 1e9 + 7;
-    static const ll mod2 = 1e9 + 9;
+    static const ll mod2 = 998244353;
     static const ll p1 = 31;
-    static const ll p2 = 37;
+    static const ll p2 = 59;
 
     struct Node {
         ll h1 = 0, h2 = 0;
