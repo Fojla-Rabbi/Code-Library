@@ -5,6 +5,7 @@ using namespace std;
 void solve() {
     // clock() gives the cur number of clock tick or pulse
     clock_t st = clock();
+    
     int n;
     cin >> n;
 
