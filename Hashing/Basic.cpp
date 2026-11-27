@@ -1,3 +1,5 @@
+// Final one
+
 #include<bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -12,34 +14,33 @@ struct Hash {
 
     Hash(const string& s) {
         int n = s.size();
-        h.resize(n + 1);
-        pw.resize(n + 1);
-
+        h.resize(n);
+        pw.resize(n);
+        
         pw[0] = {1, 1};
+        h[0] = {s[0] - 'a' + 1, s[0] - 'a' + 1};
 
-        for (int i = 0; i < n; i++) {
-            int x = s[i] - 'a' + 1;
+        for (int i = 1; i < n; i++) {
+            int val = s[i] - 'a' + 1;
 
-            pw[i + 1] = {
-                1LL * pw[i].first * p1 % mod1,
-                1LL * pw[i].second * p2 % mod2
-            };
+            pw[i].first = 1LL * pw[i - 1].first * p1 % mod1;
+            pw[i].second = 1LL * pw[i - 1].second * p2 % mod2;
 
-            h[i + 1] = {
-                (1LL * h[i].first * p1 + x) % mod1,
-                (1LL * h[i].second * p2 + x) % mod2
-            };
+            h[i].first = (1LL * h[i - 1].first * p1 + val) % mod1;
+            h[i].second = (1LL * h[i - 1].second * p2 + val) % mod2;    
         }
     }
 
     pair<int, int> get_hash(int l, int r) {
         // 0-indexed, inclusive
-        int x = (h[r + 1].first -
-                 1LL * h[l].first * pw[r - l + 1].first % mod1
+        if(l == 0) return h[r];
+
+        int x = (h[r].first -
+                 1LL * h[l - 1].first * pw[r - l + 1].first % mod1
                  + mod1) % mod1;
 
-        int y = (h[r + 1].second -
-                 1LL * h[l].second * pw[r - l + 1].second % mod2
+        int y = (h[r].second -
+                 1LL * h[l - 1].second * pw[r - l + 1].second % mod2
                  + mod2) % mod2;
 
         return {x, y};
@@ -58,6 +59,11 @@ void solve() {
     while(q--) {
         int l1, r1, l2, r2;
         cin >> l1 >> r1 >> l2 >> r2;
+
+        l1--; 
+        r1--; 
+        l2--; 
+        r2--;
 
         if(r1 - l1 != r2 - l2) {
             cout << "NO\n";
