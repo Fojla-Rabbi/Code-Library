@@ -49,16 +49,26 @@ public:
     }
 };
 
-int main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-    
+void solve() {
     Trie t;
     t.insert("harvard");
     t.insert("yoyo");
     t.insert("kuet");
+
     cout << t.search("harvard") << '\n';
     cout << t.search("hard") << '\n';
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    int t = 1;
+    cin >> t;
+    
+    while(t--) {
+        solve();
+    }
 
     return 0;
 }
