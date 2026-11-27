@@ -1,41 +1,69 @@
 // Fixed
 
 #include<bits/stdc++.h>
-#include<ext/pb_ds/assoc_container.hpp>
-#include<ext/pb_ds/tree_policy.hpp>
-using namespace __gnu_pbds;
 using namespace std;
 #define ll long long
 
-template <typename T> using o_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-
 void solve() {
-    int n, k;
-    cin >> n >> k;
+    int n, m;
+    cin >> n >> m;
 
-    vector<ll> a(n + 1), pref(n + 1);
-    for(int i = 1; i <= n; i++) {
-        cin >> a[i];
-        pref[i] = (pref[i - 1] + a[i]) % k;
+    vector<pair<int, int>> seg(m);
+    for(int i = 0; i < m; i++) {
+        cin >> seg[i].first >> seg[i].second;
     }
 
-    ll ans = 0;
-    map<ll, o_set<int>> mp;
-    mp[0].insert(0);
-    for(int i = 1; i <= n; i++) {
-        auto it = mp.find(pref[i]);
-        if(it == mp.end()) {
-            mp[pref[i]].insert(i);
-            continue;
+    int q;
+    cin >> q;
+
+    vector<int> sq(q);
+    for(int i = 0; i < q; i++) {
+        cin >> sq[i];
+    }
+
+    ll low = 0, high = q - 1;
+    int idx = q + 10;
+
+    while(low <= high) {
+        ll mid = (low + high) / 2;
+
+        vector<int> v;
+        for(int i = 0; i <= mid; i++) {
+            v.push_back(sq[i]);
         }
 
-        int idx = i - k;
-        int cnt = mp[pref[i]].order_of_key(idx);
-        ans += cnt;
-        mp[pref[i]].insert(i);
+        sort(v.begin(), v.end());
+
+        bool flag = false;
+        for(int i = 0; i < m; i++) {
+            auto [l, r] = seg[i];
+
+            auto it1 = lower_bound(v.begin(), v.end(), l);
+            auto it2 = upper_bound(v.begin(), v.end(), r);
+
+            if(it1 == v.end()) continue;
+
+            int one_cnt = it2 - it1;
+            int total_cnt = r - l + 1;
+            int zero_cnt = total_cnt - one_cnt;
+
+            if(one_cnt > zero_cnt) {
+                flag = true;
+                break;
+            }
+        }
+
+        if(flag) {
+            idx = mid;
+            high = mid - 1;
+        }
+        else {
+            low = mid + 1;
+        }
     }
 
-    cout << ans << '\n';
+    if(idx == q + 10) cout << "-1\n";
+    else cout << idx + 1 << '\n';
 }
 
 int main() {
@@ -44,8 +72,10 @@ int main() {
 
     int t = 1;
     cin >> t;
+
     while(t--) {
         solve();
     }
+
     return 0;
 }
