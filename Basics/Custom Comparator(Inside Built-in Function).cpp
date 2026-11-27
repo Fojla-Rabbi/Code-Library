@@ -10,7 +10,7 @@ void solve() {
     for(int i = 0; i < n; i++) {
         int a, b;
         cin >> a >> b;
-        ans_ind[i] = make_pair(a, b);
+        vp[i] = {a, b};
     }
   
     // Sorting with custom comparator(on the basis of second)
@@ -19,7 +19,9 @@ void solve() {
         return a.second < b.second;
         // true --> keeps them as they are
         // false --> makes change 
+        // Never use <= never
     });
+    
     for(int i = 0; i < n; i++) {
         cout << vp[i].second << " ";
     }
@@ -29,6 +31,7 @@ void solve() {
 int main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
+    
     solve();
     return 0;
 }
