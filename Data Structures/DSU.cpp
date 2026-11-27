@@ -4,22 +4,26 @@ using namespace std;
 
 struct DSU {
     vector<int> parent, sz;
-
+    vector<int> mn;
+ 
     DSU(int n) {
         parent.resize(n + 1);
         sz.resize(n + 1, 1);
+        mn.resize(n + 1);
+        
         for(int i = 0; i <= n; i++) {
             parent[i] = i;
+            mn[i] = i;
         }
     }
-
+ 
     int find(int v) {
         if(parent[v] == v) {
             return v;
         }
         return parent[v] = find(parent[v]);
     } 
-
+ 
     void unite(int a, int b) {
         a = find(a);
         b = find(b);
@@ -29,15 +33,20 @@ struct DSU {
             }
             parent[b] = a;
             sz[a] += sz[b];
+            mn[a] = min(mn[a], mn[b]);
         }
     }
-
+ 
     bool same(int a, int b) {
         return find(a) == find(b);
     }
-
+ 
     int size(int v) {
         return sz[find(v)];
+    }
+ 
+    int find_min(int v) {
+        return mn[find(v)];
     }
 };
 
@@ -45,10 +54,12 @@ int main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
 
-    int t;
+    int t = 1;
     cin >> t;
+    
     while(t--) {
         solve();
     }
+
     return 0;
 }
