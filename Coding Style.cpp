@@ -23,7 +23,6 @@ void solve() {
 
     ll low = 0, high = q - 1;
     int idx = q + 10;
-
     while(low <= high) {
         ll mid = (low + high) / 2;
 
